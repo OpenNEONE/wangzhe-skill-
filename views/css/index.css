@@ -1,0 +1,11 @@
+
+
+.my-hero p {
+    line-height: 40px;
+    font-size: 16px;
+    color: #f18ebd;
+}
+
+#heroList {
+    height: 375px;
+}

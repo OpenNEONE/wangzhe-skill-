@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="./css/index.css">
+    <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="../node_modules/twbs-pagination/jquery.twbsPagination.js"></script>
+    <script src="../node_modules/art-template/lib/template-web.js"></script>
+</head>
+
+<body>
+
+    <div class="container my-hero" style="margin-top: 100px;">
+        <ul class="media-list list-group" id="heroList"></ul>
+        <ul class="pagination"></ul>
+    </div>
+
+    <script type="text/template" id="heroInfo">
+        {{ each data val }}
+            <li class="media list-group-item">
+                <div class="media-left">
+                    <a href="#">
+                        <img class="media-object" src="{{ val.callerImg }}" alt="{{ val.callerName }}">
+                    </a>
+                </div>
+                <div class="media-body">
+                    <h4 class="media-heading">{{ val.callerName }}</h4>
+                    <p>{{ val.desc }}</p>
+                </div>
+            </li>
+        {{ /each }}
+    </script>
+
+    <script>
+        $(function () {
+            let currentPage = 1
+            let pageSize = 3
+
+            function render() {
+                $.ajax({
+                    type: "get",
+                    url: "/getAll",
+                    data: {
+                        currentPage,
+                        pageSize
+                    },
+                    dataType: "json",
+                    success: function (res) {
+                        console.log(res)
+                        if (res.code == 200) {
+                            var str = template("heroInfo", res)
+                            $("#heroList").html(str)
+                            // 2.0 渲染分页数据
+                            $(".pagination").twbsPagination({
+                                totalPages: res.total,
+                                visiblePages: 5,
+                                first: "首页",
+                                last: "尾页",
+                                prev: "上一页",
+                                next: "下一页",
+                                initiateStartPageClick: false,
+                                onPageClick: function(event, page) {
+                                    currentPage = page
+                                    render()
+                                }
+                            })
+                        }
+                    }
+                })
+            }
+            render()
+
+        })
+    </script>
+
+</body>
+
+</html>
